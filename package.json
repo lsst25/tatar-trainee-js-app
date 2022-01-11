@@ -1,0 +1,11 @@
+{
+  "name": "tatar-trainee-js-app",
+  "version": "1.0.0",
+  "description": "Native JS trainee project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tatar Yurii",
+  "license": "ISC"
+}
