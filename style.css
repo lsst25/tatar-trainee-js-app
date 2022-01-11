@@ -1,0 +1,72 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+header {
+    padding: 15px;
+    background-color: #7f837f;
+    color: white;
+}
+
+fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+}
+
+button {
+    border: none;
+    outline: none;
+}
+
+.app-name {
+    width: 200px;
+    margin: 0 auto 20px;
+}
+
+.header_nav {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.header_nav_input_field {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    flex-grow: 1;
+}
+
+.header_nav_input_field input {
+    outline: none;
+    border: 1px solid white;
+    border-right: none;
+    background-color: white;
+    flex-grow: 1;
+    font-size: 25px;
+    padding: 5px;
+}
+
+.header_nav_input_field i {
+    min-width: 50px;
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    border: 1px solid white;
+    border-left: none;
+}
+
+.favourites_btn {
+    font-family: inherit;
+    font-size: 15px;
+    color: white;
+    background-color: #7f837f;
+    padding: 5px 20px;
+    border: 1px solid white;
+}
