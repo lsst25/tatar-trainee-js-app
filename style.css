@@ -5,10 +5,10 @@
     list-style: none;
 }
 
-header {
-    padding: 15px;
-    background-color: #7f837f;
-    color: white;
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@100;400&family=Playfair+Display&display=swap');
+
+body {
+    font-family: 'Lato', sans-serif;
 }
 
 fieldset {
@@ -21,11 +21,57 @@ fieldset {
 button {
     border: none;
     outline: none;
+    font-family: inherit;
+}
+
+
+/*________________________Scroll barr*_____________________________________*/
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/*_____________________________________________________________________________*/
+
+header {
+    padding: 15px;
+    background-color: #7f837f;
+    color: white;
+}
+
+main {
+    height: 100%;
+    padding: 15px;
+}
+
+footer  {
+    position: fixed;
+    height: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
+    background-color: #7f837f;
+
 }
 
 .app-name {
     width: 200px;
     margin: 0 auto 20px;
+    font-family: 'Lato', sans-serif;
+    letter-spacing: 1.5px;
 }
 
 .header_nav {
@@ -37,6 +83,7 @@ button {
 }
 
 .header_nav_input_field {
+    position: relative;
     display: flex;
     flex-flow: row nowrap;
     align-items: stretch;
@@ -51,6 +98,23 @@ button {
     flex-grow: 1;
     font-size: 25px;
     padding: 5px;
+    border-radius: 5px 0 0 5px;
+}
+
+.search_list {
+    position: absolute;
+    z-index: 1000;
+    top: 50px;
+    padding: 5px;
+    width: 100%;
+    max-height: 500px;
+    overflow: auto;
+    color: white;
+    background-color: #454845;
+}
+
+search_list li {
+    margin-bottom: 10px;
 }
 
 .header_nav_input_field i {
@@ -62,11 +126,55 @@ button {
     border-left: none;
 }
 
+.header_nav_input_field i:hover {
+    background-color: #666966;
+    transition: background-color 200ms;
+}
+
 .favourites_btn {
-    font-family: inherit;
+    position: absolute;
+    right: 0;
+    top: 0;
     font-size: 15px;
     color: white;
     background-color: #7f837f;
     padding: 5px 20px;
     border: 1px solid white;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.favourites_btn:hover {
+    background-color: #666966;
+    transition: background-color 200ms;
+}
+
+.recent_searches {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.recent_searches ul {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.beer_card {
+    display: flex;
+    flex-flow: row nowrap;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.card_image {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 50px;
+    height: auto;
 }

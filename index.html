@@ -11,25 +11,34 @@
 </head>
 <body>
     <header>
-        <h3 class="app-name">App Name</h3>
+        <h1 class="app-name">App Name</h1>
 
         <nav class="header_nav">
             <fieldset class="header_nav_input_field">
-                <input type="text">
-                <i class="fa fa-search"></i>
+                <input type="search" id="search_input" minlength="1" maxlength="100" placeholder="Search...">
+                <i class="fa fa-search" id="search_icon"></i>
+                <ul class="search_list" id="search_list">
+                </ul>
             </fieldset>
-            <button type="button" class="favourites_btn">Favourites</button>
+
         </nav>
         <div class="recent_searches">
-            <ul>
-                <li>Lorem ipsum dolor sit amet.</li>
-                <li>Lorem ipsum dolor.</li>
-                <li>Lorem ipsum.</li>
+            <h3>Recent searches:</h3>
+            <ul  id="recent">
             </ul>
         </div>
-
+        <button type="button" class="favourites_btn">Favourites</button>
     </header>
 
+    <main>
+        <ul id="list">
+
+        </ul>
+    </main>
+
+    <footer>
+
+    </footer>
     <script src="app.js"></script>
 </body>
 </html>
