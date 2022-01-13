@@ -102,8 +102,12 @@ footer  {
 }
 
 .search_list {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 10px;
     position: absolute;
-    z-index: 1000;
+    z-index: 100;
     top: 50px;
     padding: 5px;
     width: 100%;
@@ -114,9 +118,33 @@ footer  {
     border-radius: 5px;
 }
 
-.search_list li {
-    margin-bottom: 10px;
+.search_list .beer_card {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 5px;
     border-bottom: 1px solid white;
+    max-height: 120px;
+    margin-bottom: 10px;
+}
+
+.search_list img {
+    max-height: 120px;
+    order: 1;
+}
+
+.search_list .card_header {
+    order: 2;
+    max-width: 150px;
+}
+
+.search_list .description {
+    order: 3;
+    flex-grow: 1;
+}
+
+.search_list .price {
+    order: 4;
 }
 
 .header_nav_input_field i {
@@ -166,21 +194,41 @@ footer  {
     gap: 10px;
 }
 
-.beer_card {
-    display: flex;
-    flex-flow: row nowrap;
-    gap: 10px;
-    justify-content: space-between;
-    height: auto;
-    margin-bottom: 15px;
+main .main_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 20px;
 }
 
-.card_image {
+main .beer_card {
+    display: grid;
+    grid-template-rows: max-content 200px 1fr;
+    gap: 5px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+    color: #7f837f;
+
+
+}
+
+main .card_header {
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    text-transform: uppercase;
+    color: black;
+}
+
+ main .price {
+    color: #454845;
+}
+
+
+ main .card_image {
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 5px;
-    width: 50px;
-    height: auto;
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
 }
 
 #load_more {
@@ -191,4 +239,15 @@ footer  {
     letter-spacing: 1px;
     text-decoration: none;
     color: gray;
+}
+
+#scroll-to-top-btn {
+    position: fixed;
+    z-index: 50;
+    bottom: 15px;
+    right: 15px;
+    font-size: 70px;
+    color: #7f837f;
+    cursor: pointer;
+    transition: opacity 300ms;
 }

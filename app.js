@@ -7,6 +7,7 @@ const elements = {
     searchIcon: document.querySelector('#search_icon'),
     recent: document.querySelector('#recent'),
     loadMoreLink: document.querySelector('#load_more'),
+    scrollToTopBtn: document.querySelector('#scroll-to-top-btn'),
 }
 
 class App {
@@ -19,6 +20,7 @@ class App {
         this.searchIcon = elements.searchIcon;
         this.recent = elements.recent;
         this.loadMoreLink = elements.loadMoreLink;
+        this.scrollToTopBtn = elements.scrollToTopBtn;
         //----------------------------------------
         //---State--------------------------------
         this.beerList = {};
@@ -31,9 +33,33 @@ class App {
         this.searchIcon.addEventListener('click', this.searchHandler.bind(this));
         this.loadMoreLink.addEventListener('click', this.loadMoreLinkHandler.bind(this));
         document.addEventListener("click", this.hideSearchListHandler.bind(this));
+        window.addEventListener("scroll", this.scrollHandler.bind(this))
+        this.scrollToTopBtn.addEventListener("click", this.scrollToTop.bind(this));
         //----------------------------------------
 
+        this.rootElement = document.documentElement;
         this.searchList.style.display = 'none';
+    }
+
+    scrollHandler() {
+        if (window.scrollY === 0) {
+            setTimeout(this.hideScrollButton.bind(this), 300);
+            this.scrollToTopBtn.style.opacity = '0';
+        } else {
+            this.scrollToTopBtn.style.visibility = 'visible';
+            this.scrollToTopBtn.style.opacity = '1';
+        }
+    }
+
+    hideScrollButton() {
+        this.scrollToTopBtn.style.visibility = 'hidden';
+    }
+
+    scrollToTop() {
+        this.rootElement.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
     searchHandler(event) {
@@ -156,11 +182,11 @@ class Beer {
     render() {
         return `
             <li> 
-                <h4>${this.title}</h4>
                 <article class="beer_card">
+                    <h4 class="card_header">${this.title}</h4>
                     <img class="card_image" src="${this.image_url}" alt="beer image">
-                    <p>${this.description}</p>
-                    <p>\$${this.price}</p>
+                    <p class="description">${this.description}</p>
+                    <p class="price">\$${this.price}</p>
                     </article>
             </li>`
     }
