@@ -111,10 +111,12 @@ footer  {
     overflow: auto;
     color: white;
     background-color: #454845;
+    border-radius: 5px;
 }
 
-search_list li {
+.search_list li {
     margin-bottom: 10px;
+    border-bottom: 1px solid white;
 }
 
 .header_nav_input_field i {
@@ -182,7 +184,11 @@ search_list li {
 }
 
 #load_more {
+    font-family: 'Playfair Display', serif;
     display: block;
     width: 100px;
     margin: 0 auto;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: gray;
 }
