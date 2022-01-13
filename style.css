@@ -151,15 +151,15 @@ search_list li {
 
 .recent_searches {
     display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
+    flex-flow: row wrap;
+
     align-items: center;
     gap: 10px;
 }
 
 .recent_searches ul {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     align-items: center;
     gap: 10px;
 }
@@ -167,6 +167,8 @@ search_list li {
 .beer_card {
     display: flex;
     flex-flow: row nowrap;
+    gap: 10px;
+    justify-content: space-between;
     height: auto;
     margin-bottom: 15px;
 }
@@ -177,4 +179,10 @@ search_list li {
     padding: 5px;
     width: 50px;
     height: auto;
+}
+
+#load_more {
+    display: block;
+    width: 100px;
+    margin: 0 auto;
 }
