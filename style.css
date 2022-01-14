@@ -234,6 +234,7 @@ footer  {
 
 .favourites-btn.available {
     background-color: coral;
+    border: none;
 }
 
 .favourites-btn.available:hover {
