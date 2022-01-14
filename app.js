@@ -33,12 +33,21 @@ class App {
         this.searchIcon.addEventListener('click', this.searchHandler.bind(this));
         this.loadMoreLink.addEventListener('click', this.loadMoreLinkHandler.bind(this));
         document.addEventListener("click", this.hideSearchListHandler.bind(this));
-        window.addEventListener("scroll", this.scrollHandler.bind(this))
+        document.addEventListener('click', this.searchRecallHandler.bind(this));
+        window.addEventListener("scroll", this.scrollHandler.bind(this));
         this.scrollToTopBtn.addEventListener("click", this.scrollToTop.bind(this));
         //----------------------------------------
 
         this.rootElement = document.documentElement;
         this.searchList.style.display = 'none';
+    }
+
+    searchRecallHandler(event) {
+        if (event.target.closest('ul') === this.recent) {
+            console.log(event.target.textContent);
+            this.input.value = event.target.textContent;
+            this.search(true);
+        }
     }
 
     scrollHandler() {
@@ -99,7 +108,7 @@ class App {
         console.log(beers);
     }
 
-    search() {
+    search(recall = false) {
         this.searchList.innerHTML = '';
         this.fetchBeersByName(this.input.value)
             .then(beers => {
@@ -113,7 +122,11 @@ class App {
             })
             .finally(() => {
             this.updateRecent(this.input.value);
-            this.input.value = '';
+
+            if (!recall) {
+                this.input.value = '';
+            }
+
         });
 
     }
@@ -121,11 +134,15 @@ class App {
     updateRecent(value) {
         this.recent.innerHTML = '';
 
-        if (this.recentList.length === 3) this.recentList.shift();
-        this.recentList.push(value);
+        if (!this.recentList.includes(value)) {
+            this.recentList.push(value);
 
+            if (this.recentList.length > 3) {
+                this.recentList.shift();
+            }
+        }
         this.recentList.forEach(item => {
-            this.recent.insertAdjacentHTML('afterbegin', `<li>${item}</li>`)
+            this.recent.insertAdjacentHTML('afterbegin', `<li class="recent_search_item">${item}</li>`);
         })
     }
 
