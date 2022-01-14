@@ -10,6 +10,9 @@ const elements = {
     scrollToTopBtn: document.querySelector('#scroll-to-top-btn'),
     favouritesBtn: document.querySelector('#favourites-btn'),
     counterOfFavoriteItems: document.querySelector('#counter-of-favorite-items'),
+    modal: document.querySelector('#favoritesModal'),
+    closeModal: document.querySelector('.close'),
+    modalList: document.querySelector('#modal-list'),
 }
 
 class App {
@@ -25,6 +28,9 @@ class App {
         this.scrollToTopBtn = elements.scrollToTopBtn;
         this.favouritesBtn = elements.favouritesBtn;
         this.counterOfFavoriteItems = elements.counterOfFavoriteItems;
+        this.modal = elements.modal;
+        this.closeModal = elements.closeModal;
+        this.modalList = elements.modalList;
         //----------------------------------------
         //---State--------------------------------
         this.mainBeerList = {};
@@ -37,13 +43,16 @@ class App {
         this.input.addEventListener('keyup', this.searchHandler.bind(this));
         this.searchIcon.addEventListener('click', this.searchHandler.bind(this));
         this.loadMoreLink.addEventListener('click', this.loadMoreLinkHandler.bind(this));
+        this.favouritesBtn.addEventListener('click', this.favouritesBtnHandler.bind(this));
+        this.closeModal.addEventListener('click', this.closeModalHandler.bind(this));
         document.addEventListener("click", this.hideSearchListHandler.bind(this));
         document.addEventListener('click', this.searchRecallHandler.bind(this));
         document.addEventListener('click', this.addToFavoritesBtnHandler.bind(this));
         window.addEventListener("scroll", this.scrollHandler.bind(this));
+        window.addEventListener('click', (e) => e.target === this.modal ? this.closeModalHandler() : null);
         this.scrollToTopBtn.addEventListener("click", this.scrollToTop.bind(this));
         //----------------------------------------
-
+        //---Initialization_______________________
         this.rootElement = document.documentElement;
         this.searchList.style.display = 'none';
         this.scrollToTopBtn.style.visibility = 'hidden';
@@ -52,7 +61,39 @@ class App {
             this.recentList = JSON.parse(localStorage.getItem('recentList'));
             this.updateRecentList();
         }
+
+        if (localStorage.favorites) {
+            JSON.parse(localStorage.getItem('favorites')).forEach(item => {
+                this.favorites.add(+item);
+            });
+            this.updateFavoritesBtn();
+            this.updateCounterOfFavoriteItems();
+        }
+
     }
+
+    closeModalHandler() {
+        this.modalList.innerHTML = '';
+        this.modal.style.display = "none";
+
+    }
+
+    openFavoritesModal() {
+        this.modal.style.display = "block";
+    }
+
+    favouritesBtnHandler(event) {
+        if (this.favorites.size === 0) return;
+
+        this.openFavoritesModal();
+
+        this.fetchBeersById(Array.from(this.favorites))
+            .then(beers => {
+                this.modalList.insertAdjacentHTML('beforeend', new BeerList(beers).render());
+            })
+
+    }
+
 
     updateCounterOfFavoriteItems() {
         this.counterOfFavoriteItems.textContent = this.favorites.size || '';
@@ -67,7 +108,7 @@ class App {
 
     addToFavoritesBtnHandler(event) {
         const { target } = event;
-        const {classList} = target;
+        const { classList } = target;
 
         if (classList.contains('add-to-favorites-btn')) {
 
@@ -83,13 +124,27 @@ class App {
                 this.checkMainListOnFavorites(id);
             }
 
+            if (target.closest('#modal-list')) {
+                this.checkMainListOnFavorites(id);
+                target.closest('li').remove();
+                if (this.favorites.size === 1) {
+                    this.closeModalHandler();
+                }
+            }
+
             if (this.favorites.has(id)) {
                 this.favorites.delete(id);
+                this.updateFavoritesInLocalStorage();
             } else {
                 this.favorites.add(id);
+                this.updateFavoritesInLocalStorage();
             }
             this.updateCounterOfFavoriteItems();
         }
+    }
+
+    updateFavoritesInLocalStorage() {
+        localStorage.setItem('favorites', JSON.stringify(Array.from(this.favorites)));
     }
 
     checkMainListOnFavorites(id) {
@@ -185,14 +240,12 @@ class App {
             if (!recall) {
                 this.input.value = '';
             }
-
         });
 
     }
 
     addToRecent(value) {
         this.recent.innerHTML = '';
-
         if (!this.recentList.includes(value)) {
             this.recentList.push(value);
 
@@ -200,9 +253,7 @@ class App {
                 this.recentList.shift();
             }
         }
-
         localStorage.setItem('recentList', JSON.stringify(this.recentList));
-
         this.updateRecentList();
     }
 
@@ -221,6 +272,18 @@ class App {
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async fetchBeersById(idsArray) {
+        try {
+            const response = await fetch(this.url + `/?ids=${idsArray.join('|')}` + name);
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                return await jsonResponse;
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 
