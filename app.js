@@ -47,6 +47,11 @@ class App {
         this.rootElement = document.documentElement;
         this.searchList.style.display = 'none';
         this.scrollToTopBtn.style.visibility = 'hidden';
+
+        if (localStorage.recentList) {
+            this.recentList = JSON.parse(localStorage.getItem('recentList'));
+            this.updateRecentList();
+        }
     }
 
     updateCounterOfFavoriteItems() {
@@ -175,7 +180,7 @@ class App {
                 this.searchList.style.display = 'block';
             })
             .finally(() => {
-            this.updateRecent(this.input.value);
+            this.addToRecent(this.input.value);
 
             if (!recall) {
                 this.input.value = '';
@@ -185,7 +190,7 @@ class App {
 
     }
 
-    updateRecent(value) {
+    addToRecent(value) {
         this.recent.innerHTML = '';
 
         if (!this.recentList.includes(value)) {
@@ -195,9 +200,16 @@ class App {
                 this.recentList.shift();
             }
         }
+
+        localStorage.setItem('recentList', JSON.stringify(this.recentList));
+
+        this.updateRecentList();
+    }
+
+    updateRecentList() {
         this.recentList.forEach(item => {
             this.recent.insertAdjacentHTML('afterbegin', `<li class="recent_search_item">${item}</li>`);
-        })
+        });
     }
 
     async fetchBeersByName(name) {
