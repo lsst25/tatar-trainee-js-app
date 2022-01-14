@@ -71,7 +71,8 @@ footer  {
     width: 200px;
     margin: 0 auto 20px;
     font-family: 'Lato', sans-serif;
-    letter-spacing: 1.5px;
+    font-weight: 200;
+    letter-spacing: 2px;
 }
 
 .header_nav {
@@ -123,7 +124,6 @@ footer  {
     flex-flow: row nowrap;
     justify-content: space-between;
     gap: 5px;
-    border-bottom: 1px solid white;
     max-height: 120px;
     margin-bottom: 10px;
 }
@@ -131,23 +131,43 @@ footer  {
 .search_list img {
     max-height: 120px;
     order: 1;
+    flex-grow: 1;
 }
 
 .search_list .card_header {
     order: 2;
-    max-width: 150px;
+    flex-grow: 1;
 }
 
 .search_list .description {
     order: 3;
+    flex-grow: 3;
+}
+
+.search_list .beer-card_bottom {
+    order: 4;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: end;
     flex-grow: 1;
 }
 
-.search_list .price {
-    order: 4;
+.search_list .add-to-favorites-btn {
+    color: black;
+    border-radius: 3px;
+    font-size: 15px;
+    height: 20px;
+    width: 100px;
 }
 
-.header_nav_input_field i {
+.search_list .add-to-favorites-btn:hover {
+    background-color: #666966;
+    color: white;
+    transition: background-color 100ms ease-out;
+}
+
+#search_icon {
     min-width: 50px;
     padding: 5px 20px;
     display: flex;
@@ -161,7 +181,7 @@ footer  {
     transition: background-color 200ms;
 }
 
-.favourites_btn {
+.favourites-btn {
     position: absolute;
     right: 0;
     top: 0;
@@ -174,8 +194,12 @@ footer  {
     text-transform: uppercase;
 }
 
-.favourites_btn:hover {
-    background-color: #666966;
+.favourites-btn.available {
+    background-color: coral;
+}
+
+.favourites-btn.available:hover {
+    background-color: chocolate;
     transition: background-color 200ms;
 }
 
@@ -194,6 +218,11 @@ footer  {
     gap: 10px;
 }
 
+.recent_search_item:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 main .main_list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -207,8 +236,6 @@ main .beer_card {
     font-family: 'Playfair Display', serif;
     letter-spacing: 1px;
     color: #7f837f;
-
-
 }
 
 main .card_header {
@@ -218,10 +245,15 @@ main .card_header {
     color: black;
 }
 
+main .beer-card_bottom {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
  main .price {
     color: #454845;
 }
-
 
  main .card_image {
     border: 1px solid #ddd;
@@ -229,6 +261,30 @@ main .card_header {
     object-fit: contain;
     width: 100%;
     height: 100%;
+}
+
+main .add-to-favorites-btn {
+    font-size: 15px;
+    height: 20px;
+    min-width: 100px;
+    border-radius: 3px;
+}
+
+main .add-to-favorites-btn:hover {
+    background-color: #555555;
+    color: white;
+}
+
+.add-to-favorites-btn.in-favorites {
+    background-color: coral;
+    color: white;
+
+}
+
+.add-to-favorites-btn.in-favorites:hover {
+    background-color: chocolate;
+    color: white;
+    transition: background-color 100ms;
 }
 
 #load_more {
@@ -251,3 +307,8 @@ main .card_header {
     cursor: pointer;
     transition: opacity 300ms;
 }
+
+
+
+
+

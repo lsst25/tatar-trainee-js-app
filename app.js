@@ -8,6 +8,8 @@ const elements = {
     recent: document.querySelector('#recent'),
     loadMoreLink: document.querySelector('#load_more'),
     scrollToTopBtn: document.querySelector('#scroll-to-top-btn'),
+    favouritesBtn: document.querySelector('#favourites-btn'),
+    counterOfFavoriteItems: document.querySelector('#counter-of-favorite-items'),
 }
 
 class App {
@@ -21,9 +23,12 @@ class App {
         this.recent = elements.recent;
         this.loadMoreLink = elements.loadMoreLink;
         this.scrollToTopBtn = elements.scrollToTopBtn;
+        this.favouritesBtn = elements.favouritesBtn;
+        this.counterOfFavoriteItems = elements.counterOfFavoriteItems;
         //----------------------------------------
         //---State--------------------------------
-        this.beerList = {};
+        this.mainBeerList = {};
+        this.favorites = new Set();
         this.recentList = [];
         this.page = 1;
         this.itemsOnPage = 25;
@@ -34,17 +39,67 @@ class App {
         this.loadMoreLink.addEventListener('click', this.loadMoreLinkHandler.bind(this));
         document.addEventListener("click", this.hideSearchListHandler.bind(this));
         document.addEventListener('click', this.searchRecallHandler.bind(this));
+        document.addEventListener('click', this.addToFavoritesBtnHandler.bind(this));
         window.addEventListener("scroll", this.scrollHandler.bind(this));
         this.scrollToTopBtn.addEventListener("click", this.scrollToTop.bind(this));
         //----------------------------------------
 
         this.rootElement = document.documentElement;
         this.searchList.style.display = 'none';
+        this.scrollToTopBtn.style.visibility = 'hidden';
+    }
+
+    updateCounterOfFavoriteItems() {
+        this.counterOfFavoriteItems.textContent = this.favorites.size || '';
+        this.updateFavoritesBtn();
+    }
+
+    updateFavoritesBtn() {
+        this.favorites.size ?
+            this.favouritesBtn.classList.add('available') :
+            this.favouritesBtn.classList.remove('available');
+    }
+
+    addToFavoritesBtnHandler(event) {
+        const { target } = event;
+        const {classList} = target;
+
+        if (classList.contains('add-to-favorites-btn')) {
+
+            classList.toggle('in-favorites');
+
+            classList.contains('in-favorites') ?
+                target.textContent = 'Remove' :
+                target.textContent = 'Add';
+
+            const id = +target.id;
+
+            if (target.closest('#search_list')) {
+                this.checkMainListOnFavorites(id);
+            }
+
+            if (this.favorites.has(id)) {
+                this.favorites.delete(id);
+            } else {
+                this.favorites.add(id);
+            }
+            this.updateCounterOfFavoriteItems();
+        }
+    }
+
+    checkMainListOnFavorites(id) {
+        const mainListButton = this.list.querySelector(`[id="${id}"]`);
+
+        if (mainListButton) {
+            mainListButton.classList.toggle('in-favorites');
+            mainListButton.classList.contains('in-favorites') ?
+                mainListButton.textContent = 'Remove' :
+                mainListButton.textContent = 'Add';
+        }
     }
 
     searchRecallHandler(event) {
         if (event.target.closest('ul') === this.recent) {
-            console.log(event.target.textContent);
             this.input.value = event.target.textContent;
             this.search(true);
         }
@@ -105,7 +160,6 @@ class App {
             setTimeout(() => alert('No more items left.'), 500);
 
         }
-        console.log(beers);
     }
 
     search(recall = false) {
@@ -194,6 +248,7 @@ class Beer {
         this.description = beer.description;
         this.image_url = beer.image_url;
         this.price = Math.floor(Math.random() * 100);
+        this.inFavorites = app.favorites.has(beer.id);
     }
 
     render() {
@@ -203,7 +258,16 @@ class Beer {
                     <h4 class="card_header">${this.title}</h4>
                     <img class="card_image" src="${this.image_url}" alt="beer image">
                     <p class="description">${this.description}</p>
-                    <p class="price">\$${this.price}</p>
+                    <fieldset class="beer-card_bottom">            
+                        <p class="price">\$${this.price}</p>
+                        <button 
+                            type="button" 
+                            class="add-to-favorites-btn ${this.inFavorites ? 'in-favorites' : ''}" 
+                            id="${this.id}">
+                                ${this.inFavorites ? 'Remove' : 'Add'}
+                            </button>
+                    </fieldset>
+                    
                     </article>
             </li>`
     }
