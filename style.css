@@ -257,7 +257,7 @@ footer  {
     gap: 10px;
 }
 
-.recent_search_item:hover {
+.recent-search-item:hover {
     text-decoration: underline;
     cursor: pointer;
 }

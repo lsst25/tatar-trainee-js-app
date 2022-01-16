@@ -19,18 +19,33 @@ class App {
     constructor(apiUrl, elements) {
         this.url = apiUrl;
         //---Elements----------------------------
-        this.searchInput = elements.searchInput;
-        this.mainList = elements.mainList;
-        this.searchList = elements.searchList;
-        this.searchIcon = elements.searchIcon;
-        this.recentSearchesList = elements.recentList;
-        this.loadMoreLink = elements.loadMoreLink;
-        this.scrollToTopBtn = elements.scrollToTopBtn;
-        this.favouritesBtn = elements.favouritesBtn;
-        this.counterOfFavoriteItems = elements.counterOfFavoriteItems;
-        this.modal = elements.modal;
-        this.closeModalSpan = elements.closeModalSpan;
-        this.modalList = elements.modalList;
+        const {
+            searchInput,
+            mainList,
+            searchList,
+            searchIcon,
+            recentList,
+            loadMoreLink,
+            scrollToTopBtn,
+            favouritesBtn,
+            counterOfFavoriteItems,
+            modal,
+            closeModalSpan,
+            modalList
+        } = elements;
+
+        this.searchInput = searchInput;
+        this.mainList = mainList;
+        this.searchList = searchList;
+        this.searchIcon = searchIcon;
+        this.recentSearchesList = recentList;
+        this.loadMoreLink = loadMoreLink;
+        this.scrollToTopBtn = scrollToTopBtn;
+        this.favouritesBtn = favouritesBtn;
+        this.counterOfFavoriteItems = counterOfFavoriteItems;
+        this.modal = modal;
+        this.closeModalSpan = closeModalSpan;
+        this.modalList = modalList;
         //----------------------------------------
         //---State--------------------------------
         this.favorites = new Set();
@@ -83,15 +98,14 @@ class App {
     favouritesBtnHandler() {
         const empty = this.favorites.size === 0;
         if (empty) {
-            return
+            return;
         }
         this.openFavoritesModal();
         this.fetchItemsById(Array.from(this.favorites))
             .then(itemsArray => {
                 this.insertItemsInList(itemsArray, this.modalList);
-            })
+            });
     }
-
 
     updateCounterOfFavoriteItems() {
         this.counterOfFavoriteItems.textContent = this.favorites.size || '';
@@ -99,13 +113,14 @@ class App {
     }
 
     updateFavoritesBtn() {
-        this.favorites.size ?
-            this.favouritesBtn.classList.add('available') :
+        if (this.favorites.size) {
+            this.favouritesBtn.classList.add('available');
+        } else {
             this.favouritesBtn.classList.remove('available');
+        }
     }
 
-    addToFavoritesBtnHandler(event) {
-        const { target } = event;
+    addToFavoritesBtnHandler({ target }) {
         const isAddToFavoritesBtn = target.classList.contains('add-to-favorites-btn');
 
         if (isAddToFavoritesBtn) {
@@ -121,7 +136,7 @@ class App {
 
             if (btnIsInModalList) {
                 this.checkMainListOnFavorites(id);
-                target.closest('li').remove();
+                target.closest('ul#modal-list li').remove();
                 if (this.favorites.size === 1) {
                     this.closeModalHandler();
                 }
@@ -151,13 +166,15 @@ class App {
 
     toggleAddToFavoritesBtn(favoritesButton) {
         favoritesButton.classList.toggle('in-favorites');
-        favoritesButton.classList.contains('in-favorites') ?
-            favoritesButton.textContent = 'Remove' :
+        if (favoritesButton.classList.contains('in-favorites')) {
+            favoritesButton.textContent = 'Remove';
+        } else {
             favoritesButton.textContent = 'Add';
+        }
     }
 
     searchRecallHandler({ target }) {
-        const isRecentSearchLiElement = target.closest('ul') === this.recentSearchesList && target.classList.contains('recent_search_item');
+        const isRecentSearchLiElement = target.closest('ul') === this.recentSearchesList && target.classList.contains('recent-search-item');
         if (isRecentSearchLiElement) {
             this.searchInput.value = target.textContent;
             this.search(true);
@@ -186,60 +203,55 @@ class App {
         });
     }
 
-    searchHandler(event) {
-        const {key, target} = event;
+    searchHandler({ key, target }) {
         if (key === 'Enter' && this.searchInput.value.length > 0 || target === this.searchIcon && this.searchInput.value.length > 0) {
-            this.search()
+            this.search();
         }
     }
 
-    loadMoreLinkHandler(event) {
+    async loadMoreLinkHandler(event) {
         event.preventDefault();
-        this.fetchItemsPerPage(this.page)
-            .then(this.insertItemsInMainList.bind(this));
+        const items = await this.fetchItemsPerPage();
+        this.insertItemsInList(items, this.mainList);
+        if (items.length < this.itemsOnPage) {
+            this.loadMoreLink.innerHTML = '';
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => alert('No more items left.'));
+            });
+        }
     }
 
-    hideSearchListHandler(event) {
-        const noNeedToHide = event.target.closest('ul') === this.searchList || event.target === this.searchInput;
+    hideSearchListHandler({ target }) {
+        const noNeedToHide = target.closest('ul#search_list') === this.searchList || target === this.searchInput;
         if (noNeedToHide) {
-            return
+            return;
         }
         this.clearSearchList();
         this.hideSearchList();
     }
 
     async renderStartList() {
-        const itemsArray = await this.fetchItemsPerPage(this.page, this.itemsOnPage);
+        const itemsArray = await this.fetchItemsPerPage();
         this.insertItemsInList(itemsArray, this.mainList);
     }
 
-    insertItemsInMainList(itemsArray) {
-        this.insertItemsInList(itemsArray, this.mainList);
-        if (itemsArray.length < this.itemsOnPage) {
-            this.loadMoreLink.innerHTML = '';
-            setTimeout(() => alert('No more items left.'), 500);
-        }
-    }
 
-    search(recall = false) {
+    async search(recall = false) {
         this.clearSearchList();
-        this.fetchItemsByName(this.searchInput.value)
-            .then(itemsArray => {
-                const nothingFound = itemsArray.length === 0;
-                if (nothingFound) {
-                    alert('There were no properties found for \n' +
-                        '   the given location.');
-                    return;
-                }
-                this.insertItemsInList(itemsArray, this.searchList);
-                this.openSearchList();
-            })
-            .finally(() => {
-            this.addToRecent(this.searchInput.value);
-            if (!recall) {
-                this.searchInput.value = '';
-            }
-        });
+        const itemsArray = await this.fetchItemsByName(this.searchInput.value);
+        const nothingFound = itemsArray.length === 0;
+        if (nothingFound) {
+            alert('There were no properties found for \n' +
+                '   the given location.');
+            this.searchInput.value = '';
+            return;
+        }
+        this.insertItemsInList(itemsArray, this.searchList);
+        this.openSearchList();
+        this.addToRecent(this.searchInput.value);
+        if (!recall) {
+            this.searchInput.value = '';
+        }
     }
 
     insertItemsInList(itemsArray, list) {
@@ -273,7 +285,7 @@ class App {
 
     updateRecent() {
         this.recent.forEach(text => {
-            this.recentSearchesList.insertAdjacentHTML('afterbegin', `<li class="recent_search_item">${text}</li>`);
+            this.recentSearchesList.insertAdjacentHTML('afterbegin', `<li class="recent-search-item">${text}</li>`);
         });
     }
 
@@ -281,8 +293,7 @@ class App {
         try {
             const response = await fetch(this.url + '/?beer_name=' + name);
             if (response.ok) {
-                const jsonResponse = await response.json();
-                return await jsonResponse;
+                return response.json();
             }
         } catch (error) {
             console.log(error);
@@ -293,8 +304,7 @@ class App {
         try {
             const response = await fetch(this.url + `/?ids=${idsArray.join('|')}`);
             if (response.ok) {
-                const jsonResponse = await response.json();
-                return await jsonResponse;
+                return response.json();
             }
         } catch (error) {
             console.log(error);
@@ -305,9 +315,8 @@ class App {
         try {
             const response = await fetch(this.url + '?page=' + this.page + '&per_page=' + this.itemsOnPage);
             if (response.ok) {
-                const jsonResponse = await response.json();
                 this.page++;
-                return await jsonResponse;
+                return response.json();
             }
         } catch(error) {
             console.log(error);
@@ -323,20 +332,21 @@ class ItemsList {
     }
 
     render() {
-        const arrayOfElements = this.beers.map(item => {
-            return new ItemCard(item, this.favorites.has(item.id)).render();
-        })
-        return arrayOfElements.join('');
+        return this.beers
+            .map(item => new ItemCard(item, this.favorites.has(item.id)).render())
+            .join('');
     }
 
 }
 
 class ItemCard {
     constructor(item, inFavorites) {
-        this.id = item.id;
-        this.title = item.name;
-        this.description = item.description;
-        this.image_url = item.image_url;
+        const {id, name, description, image_url} = item;
+
+        this.id = id;
+        this.title = name;
+        this.description = description;
+        this.image_url = image_url;
         this.price = Math.floor(Math.random() * 100/4);
         this.inFavorites = inFavorites;
     }
@@ -355,13 +365,12 @@ class ItemCard {
                             class="add-to-favorites-btn ${this.inFavorites ? 'in-favorites' : ''}" 
                             id="${this.id}">
                                 ${this.inFavorites ? 'Remove' : 'Add'}
-                            </button>
+                        </button>
                     </fieldset>
-                    
-                    </article>
+                </article>
             </li>`
     }
 }
 
 const app = new App(url, elements);
-app.renderStartList().then();
+app.renderStartList();
