@@ -13,6 +13,9 @@ const elements = {
     modal: document.querySelector('#favoritesModal'),
     closeModalSpan: document.querySelector('.close'),
     modalList: document.querySelector('#modal-list'),
+    singleItemModal: document.querySelector('#single-item-modal'),
+    singleItemModalList: document.querySelector('#single-item-modal-list'),
+    closeSingleItemModalSpan: document.querySelector('#close-single-item-modal'),
 }
 
 class App {
@@ -31,7 +34,10 @@ class App {
             counterOfFavoriteItems,
             modal,
             closeModalSpan,
-            modalList
+            modalList,
+            singleItemModal,
+            singleItemModalList,
+            closeSingleItemModalSpan
         } = elements;
 
         this.searchInput = searchInput;
@@ -46,6 +52,9 @@ class App {
         this.modal = modal;
         this.closeModalSpan = closeModalSpan;
         this.modalList = modalList;
+        this.singleItemModal= singleItemModal;
+        this.singleItemModalList = singleItemModalList;
+        this.closeSingleItemModalSpan =closeSingleItemModalSpan;
         //----------------------------------------
         //---State--------------------------------
         this.favorites = new Set();
@@ -59,11 +68,15 @@ class App {
         this.loadMoreLink.addEventListener('click', this.loadMoreLinkHandler.bind(this));
         this.favouritesBtn.addEventListener('click', this.favouritesBtnHandler.bind(this));
         this.closeModalSpan.addEventListener('click', this.closeModalHandler.bind(this));
+        this.closeSingleItemModalSpan.addEventListener('click', this.closeSingleItemModal.bind(this));
+        document.addEventListener('keyup', this.escBtnSingleItemModalHandler.bind(this));
         document.addEventListener("click", this.hideSearchListHandler.bind(this));
         document.addEventListener('click', this.searchRecallHandler.bind(this));
         document.addEventListener('click', this.addToFavoritesBtnHandler.bind(this));
+        document.addEventListener('click', this.cardHeaderClickHandler.bind(this));
         window.addEventListener("scroll", this.scrollHandler.bind(this));
         window.addEventListener('click', (e) => e.target === this.modal ? this.closeModalHandler() : null);
+        window.addEventListener('click', (e) => e.target === this.singleItemModal ? this.closeSingleItemModal() : null);
         this.scrollToTopBtn.addEventListener("click", this.scrollToTop.bind(this));
         //----------------------------------------
         //---Initialization_______________________
@@ -83,16 +96,40 @@ class App {
             this.updateFavoritesBtn();
             this.updateCounterOfFavoriteItems();
         }
+    }
 
+    escBtnSingleItemModalHandler({ key }) {
+        if (key === 'Escape') {
+            this.closeSingleItemModal();
+        }
+    }
+
+    async cardHeaderClickHandler({ target }) {
+        if (target.classList.contains('card_header') && !target.closest('#single-item-modal-list')) {
+            this.closeModalHandler();
+            this.openSingleItemModal();
+            const id = +target.closest('article.item_card').dataset.itemId;
+            const item = await this.fetchItemsById([id]);
+            this.insertItemsInList(item, this.singleItemModalList);
+        }
     }
 
     closeModalHandler() {
         this.modalList.innerHTML = '';
-        this.modal.style.display = "none";
+        this.modal.style.display = 'none';
+    }
+
+    closeSingleItemModal() {
+        this.singleItemModalList.innerHTML = '';
+        this.singleItemModal.style.display = 'none';
+    }
+
+    openSingleItemModal() {
+        this.singleItemModal.style.display = 'block';
     }
 
     openFavoritesModal() {
-        this.modal.style.display = "block";
+        this.modal.style.display = 'block';
     }
 
     favouritesBtnHandler() {
@@ -126,9 +163,10 @@ class App {
         if (isAddToFavoritesBtn) {
             this.toggleAddToFavoritesBtn(target);
 
-            const id = +target.id;
+            const id = +target.closest('article.item_card').dataset.itemId;
             const btnIsInSearchList = target.closest('#search_list');
             const btnIsInModalList = target.closest('#modal-list');
+            const btnIsInSingleItemModalList = target.closest('#single-item-modal-list');
 
             if (btnIsInSearchList) {
                 this.checkMainListOnFavorites(id);
@@ -140,6 +178,10 @@ class App {
                 if (this.favorites.size === 1) {
                     this.closeModalHandler();
                 }
+            }
+
+            if (btnIsInSingleItemModalList) {
+                this.checkMainListOnFavorites(id);
             }
 
             if (this.favorites.has(id)) {
@@ -158,7 +200,7 @@ class App {
     }
 
     checkMainListOnFavorites(id) {
-        const mainListButton = this.mainList.querySelector(`[id="${id}"]`);
+        const mainListButton = this.mainList.querySelector(`[data-item-id="${id}"] button.add-to-favorites-btn`);
         if (mainListButton) {
             this.toggleAddToFavoritesBtn(mainListButton);
         }
@@ -354,7 +396,7 @@ class ItemCard {
     render() {
         return `
             <li> 
-                <article class="item_card">
+                <article class="item_card" data-item-id="${this.id}">
                     <h4 class="card_header">${this.title}</h4>
                     <img class="card_image" src="${this.image_url}" alt="image">
                     <p class="description">${this.description}</p>
@@ -363,7 +405,7 @@ class ItemCard {
                         <button 
                             type="button" 
                             class="add-to-favorites-btn ${this.inFavorites ? 'in-favorites' : ''}" 
-                            id="${this.id}">
+                            >
                                 ${this.inFavorites ? 'Remove' : 'Add'}
                         </button>
                     </fieldset>
