@@ -6,7 +6,7 @@ self.addEventListener('activate', () => activateSW());
 
 async function activateSW() {
 
-    log('Service Worker activated');
+    console.log('Service Worker activated');
 
     const cacheKeys = await caches.keys();
 
