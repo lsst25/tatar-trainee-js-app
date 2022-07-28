@@ -1,4 +1,4 @@
-const VERSION = 'v4';
+const VERSION = 'v5';
 
 self.addEventListener('install', event => event.waitUntil(installServiceWorker()));
 self.addEventListener('fetch', event => event.respondWith(cacheThenNetwork(event)));
@@ -44,6 +44,7 @@ async function installServiceWorker() {
     const cache = await caches.open(VERSION);
 
     return cache.addAll([
+        'https://lsst25.github.io/tatar-trainee-js-app/',
         'index.html',
         'app.js',
         'style.css',
