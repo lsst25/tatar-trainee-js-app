@@ -5,7 +5,7 @@ self.addEventListener('install', event => event.waitUntil(installServiceWorker()
 
 async function installServiceWorker() {
 
-    log("Service Worker installation started ");
+    console.log("Service Worker installation started ");
 
     const cache = await caches.open(VERSION);
 
