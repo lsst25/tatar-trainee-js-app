@@ -1,7 +1,22 @@
-const VERSION = 'v3';
+const VERSION = 'v4';
 
 self.addEventListener('install', event => event.waitUntil(installServiceWorker()));
 self.addEventListener('fetch', event => event.respondWith(cacheThenNetwork(event)));
+self.addEventListener('activate', () => activateSW());
+
+async function activateSW() {
+
+    log('Service Worker activated');
+
+    const cacheKeys = await caches.keys();
+
+    cacheKeys.forEach(cacheKey => {
+        if (cacheKey !== VERSION ) {
+            caches.delete(cacheKey);
+        }
+    });
+}
+
 
 async function cacheThenNetwork(event) {
 
