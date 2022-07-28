@@ -10,7 +10,7 @@ async function installServiceWorker() {
     const cache = await caches.open(VERSION);
 
     return cache.addAll([
-        '/',
+        'index.html',
         'app.js',
         'style.css',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
