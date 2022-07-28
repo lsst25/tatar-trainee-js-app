@@ -29,7 +29,6 @@ async function installServiceWorker() {
     const cache = await caches.open(VERSION);
 
     return cache.addAll([
-        'tatar-trainee-js-app/',
         'index.html',
         'app.js',
         'style.css',
