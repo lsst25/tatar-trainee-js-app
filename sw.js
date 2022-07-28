@@ -52,7 +52,6 @@ async function installServiceWorker() {
         'https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjx4wXg.woff2',
         'https://api.punkapi.com/v2/beers',
         'https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@100;400&family=Playfair+Display&display=swap',
-        'https://lsst25.github.io/tatar-trainee-js-app/sw-register.js',
         'https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjx4wXg.woff2',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0',
         'https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtM.woff2',
